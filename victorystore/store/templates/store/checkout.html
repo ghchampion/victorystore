@@ -1,0 +1,62 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <h2>Checkout</h2>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    
+    {% if cart and cart.items.all %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Shipping Information</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label>Shipping Address</label>
+                                <textarea name="address" class="form-control" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label>Phone Number</label>
+                                <input type="text" name="phone" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Continue to Payment</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Order Summary</h4>
+                        </div>
+                        <div class="card-body">
+                            {% for item in cart.items.all %}
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>{{ item.product.name }} x {{ item.quantity }}</span>
+                                <span>${{ item.get_cost }}</span>
+                            </div>
+                            {% endfor %}
+                            <hr>
+                            <div class="d-flex justify-content-between">
+                                <strong>Total:</strong>
+                                <strong>${{ cart.get_total_price }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    {% else %}
+        <p>Your cart is empty.</p>
+        <a href="{% url 'product_list' %}" class="btn btn-primary">Continue Shopping</a>
+    {% endif %}
+</div>
+{% endblock %}
